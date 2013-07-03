@@ -1,7 +1,10 @@
 Walker
 ======
 
-A simple wrapper around Goutte to crawl an entire website
+A simple wrapper around Goutte to crawl an entire website and get some stats about each page :
+- status,
+- pages calling it,
+- other informations cactchable if you use run() method to implement your needs.
 
 ## Usage :
 In your composer.json, add Walker repository and its call into "require" block :
