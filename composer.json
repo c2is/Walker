@@ -1,0 +1,21 @@
+{
+    "name": "c2is/Walker",
+    "type": "application",
+    "description": "A basic wrapper around Goutte to crawl a website",
+    "keywords": ["crawler"],
+    "homepage": "https://github.com/c2is/Walker",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "André Cianfarani",
+            "email": "a.cianfarani@c2is.fr"
+        }
+    ],
+    "require": {
+        "php":              ">=5.4.0",
+        "fabpot/goutte":    "1.0.*@dev"
+    },
+    "autoload": {
+        "psr-0": { "Walker": "." }
+    }
+}
