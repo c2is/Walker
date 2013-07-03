@@ -154,17 +154,19 @@ class Walker
 
         return true;
     }
-    public function updateStat($url, $referer)
+    public function updateStat($url, $referer="")
     {
         foreach ($this->stats as $index => $line) {
             if ($line[0] == $url) {
                 $key = $index;
             }
         }
-        if (strpos($this->stats[$key][2], $referer) === false) {
-            $tmpContent = explode(",", $this->stats[$key][2]);
+        if (strpos($this->stats[$key][2], $referer) === false && $referer !="") {
+            $tmpContent = ($this->stats[$key][2] != "")?  explode(",", $this->stats[$key][2]):array();
             $tmpContent[] = $referer;
+
             $this->stats[$key][2] = implode(",", $tmpContent);
+
         }
     }
     public function findStat($url)
