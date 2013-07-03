@@ -23,10 +23,9 @@ class Walker
     private $walkerClient;
     private $domainWildCard;
     private $subDomainsMask;
-    private $excludedFileExt;
-    private $forbiddenPattern;
 
     public $stats;
+    public $configurations;
 
     public function __construct($baseUrl, $subDomainsMask = null)
     {
@@ -36,9 +35,18 @@ class Walker
         if (strrpos($this->baseUrl, "/") == strlen($this->baseUrl)-1) {
             $this->baseUrl = substr($this->baseUrl, 0, strlen($this->baseUrl)-1);
         }
+        $this->configurations = array();
 
-        $this->excludedFileExt = "`\.(jpg|jpeg|gif|png)$`i";
-        $this->forbiddenPattern = array("mailto", "#", "javascript");
+        $this->setConfiguration("excludedFileExt","`\.(jpg|jpeg|gif|png)$`i");
+        $this->setConfiguration("forbiddenPattern",array("mailto", "#", "javascript"));
+        $this->setConfiguration("httpClientOptions",['curl.options' => array(
+        CURLOPT_CONNECTTIMEOUT      => 150,
+        CURLOPT_TIMEOUT      => 300,
+        CURLOPT_CONNECTTIMEOUT_MS      => 150000,
+        CURLOPT_LOW_SPEED_LIMIT      => 0,
+        CURLOPT_LOW_SPEED_TIME      => 0
+            )]
+        );
 
         // get the end of domain : xx.xx.xxx.domaine.com will get .domain.com
         $domain = parse_url($this->baseUrl, PHP_URL_HOST);
@@ -51,27 +59,22 @@ class Walker
             $this->subDomainsMask = str_replace($this->domainWildCard, "", $domain);
         }
 
-        $clientOptions = array(
-            'curl.options' => array(
-                CURLOPT_CONNECTTIMEOUT      => 150,
-                CURLOPT_TIMEOUT      => 300,
-                CURLOPT_CONNECTTIMEOUT_MS      => 150000,
-                CURLOPT_LOW_SPEED_LIMIT      => 0,
-                CURLOPT_LOW_SPEED_TIME      => 0
-            ));
+    }
+    private function initClient()
+    {
         $this->walkerClient  = new \Walker\Client();
-        $this->walkerClient -> setClient(new \Guzzle\Http\Client('', $clientOptions));
+        $this->walkerClient -> setClient(new \Guzzle\Http\Client('', $this->getConfiguration("httpClientOptions")));
         $this->walkerClient->setWalker($this);
         $this->walkerClient -> setMaxRedirects(10);
-
-
     }
     public function start($callback = null)
     {
+        $this->initClient();
         $this->checkLinks($this->baseUrl, null, $callback);
     }
     public function run($callback = null)
     {
+        $this->initClient();
         $this->checkLinks($this->baseUrl, null, $callback);
     }
     public function checkLinks($url, $referer = "", $callback = null)
@@ -131,7 +134,7 @@ class Walker
         if (! $this->isValidUrl($url)) {
             return false;
         }
-        if ( ! preg_match("`".$this->subDomainsMask.$this->domainWildCard."`", $urlDomain) || preg_match($this->excludedFileExt, $url)) {
+        if ( ! preg_match("`".$this->subDomainsMask.$this->domainWildCard."`", $urlDomain) || preg_match($this->getConfiguration("excludedFileExt"), $url)) {
             return false;
         }
 
@@ -142,7 +145,7 @@ class Walker
         if (! is_string($url)) {
             return false;
         }
-        foreach ($this->forbiddenPattern as $pattern) {
+        foreach ($this->getConfiguration("forbiddenPattern") as $pattern) {
             if (strpos($url, $pattern) !== false) {
                 return false;
                 break;
@@ -184,5 +187,13 @@ class Walker
     public function getLinks()
     {
         return $this->links;
+    }
+    public function setConfiguration($key,$value)
+    {
+        $this->configurations[$key] = $value;
+    }
+    public function getConfiguration($key)
+    {
+        return $this->configurations[$key];
     }
 }
