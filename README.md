@@ -1,7 +1,7 @@
 Walker
 ======
 
-A simple wrapper around Goutte to crawl a website
+A simple wrapper around Goutte to crawl an entire website
 
 ## Usage :
 In your composer.json, add Walker repository and tis call into "require" block :
@@ -21,4 +21,36 @@ In your composer.json, add Walker repository and tis call into "require" block :
         }
     },
 }
+```
+
+Run composer update :
+
+```
+php ./composer.phar update
+
+```
+
+Instanciate the crawler, start the crawl and output stats after the process :
+```
+$walker = new \Walker\Walker("http://www.somewebsite.fr");
+$walker -> start();
+
+echo "<pre>URL | STATUS | CALLED IN";
+foreach($walker->getStats() as $stats){
+    printf("\n%s | %s | %s",$stats[0], $stats[1], $stats[2]);
+}
+echo "</pre>";
+```
+
+If you want more informations or operations to be performed real-time during crawling you can pass an anonymous function to the run() method :
+
+````
+echo "<pre>URL | STATUS | CALLED IN | LAST MODIF";
+
+$walker -> run(function ($client, $stats) {
+    $lastMod = $client->getResponse()->getHeader("last-modified");
+    printf("\n%s | %s | %s| %s",$stats[0], $stats[1], $stats[2], $lastMod);
+    flush();
+});
+echo "</pre>";
 ```
