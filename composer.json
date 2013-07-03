@@ -4,7 +4,7 @@
     "description": "A basic wrapper around Goutte to crawl a website",
     "keywords": ["crawler"],
     "homepage": "https://github.com/c2is/Walker",
-    "license": "MIT",
+    "license": "GPL",
     "authors": [
         {
             "name": "André Cianfarani",
