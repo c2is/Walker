@@ -4,3 +4,4 @@
 /.vagrant
 /bin
 .idea
+/tests.php
