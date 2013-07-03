@@ -4,7 +4,7 @@ Walker
 A simple wrapper around Goutte to crawl an entire website
 
 ## Usage :
-In your composer.json, add Walker repository and tis call into "require" block :
+In your composer.json, add Walker repository and its call into "require" block :
 
 ```
 {
