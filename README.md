@@ -6,6 +6,9 @@ A simple wrapper around Goutte to crawl an entire website and get some stats abo
 - pages referring to it,
 - other informations cactchable if you use run() method to implement your needs.
 
+Walker get all "a href" values to build its crawling, so there is an extensions' exclusion mechanism to ignore elements which are not relevants, for example images.
+See Parameters section below for more informations
+
 ## Usage :
 In your composer.json, add Walker repository and its call into "require" block :
 
