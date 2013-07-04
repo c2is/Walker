@@ -1,5 +1,5 @@
 {
-    "name": "c2is/Walker",
+    "name": "c2is/walker",
     "type": "application",
     "description": "A basic wrapper around Goutte to crawl a website",
     "keywords": ["crawler"],
