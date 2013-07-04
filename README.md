@@ -7,7 +7,12 @@ A simple wrapper around Goutte to crawl an entire website and get some stats abo
 - other informations cactchable if you use run() method to implement your needs.
 
 Walker get all "a href" values to build its crawling, so there is an extensions' exclusion mechanism to ignore elements which are not relevants, for example images.
-See Parameters section below for more informations
+See Parameters section below for more informations.
+
+By default crawling is bound to subdomain given, but the second parameter of constructor allow you to define which other subdomains could be crawled. A regexp defines allowed subdomains, example which allow any subdomains : 
+```
+$walker = new \Walker\Walker("http://www.somewebsite.fr", ".*");
+```
 
 ## Usage :
 In your composer.json, add Walker repository and its call into "require" block :
