@@ -20,7 +20,7 @@ In your composer.json add Walker into "require" block :
 ```
 {
     "require": {
-        "c2is/Walker" : "dev-master"
+        "c2is/walker" : "dev-master"
     },
     "minimum-stability": "dev",
     "autoload": {
