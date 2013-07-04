@@ -196,4 +196,9 @@ class Walker
     {
         return $this->configurations[$key];
     }
+    public function showConfigurations()
+    {
+        var_export($this->configurations);
+    }
+
 }
