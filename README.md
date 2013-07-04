@@ -47,7 +47,7 @@ echo "</pre>";
 
 If you want more informations or operations to be performed real-time during crawling you can pass an anonymous function to the run() method :
 
-````
+```
 echo "<pre>URL | STATUS | CALLED IN | LAST MODIF";
 
 $walker -> run(function ($client, $stats) {
@@ -56,4 +56,13 @@ $walker -> run(function ($client, $stats) {
     flush();
 });
 echo "</pre>";
+```
+## Parameters :
+You can override configurations using setConfiguration() method, for example
+```
+$walker->setConfiguration("httpClientOptions",['curl.options' => array(
+        CURLOPT_TIMEOUT      => 150
+    )]
+);
+$walker->setConfiguration("excludedFileExt","`\.(jpg|jpeg|gif|png)$`i");
 ```
