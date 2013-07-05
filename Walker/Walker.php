@@ -154,6 +154,11 @@ class Walker
         if (! filter_var($url, FILTER_VALIDATE_URL)) {
             return false;
         }
+        // filter_var considers http://www.portesdusoleil.commultipass-journee-hebergeur-adherent.html as an url
+        // so we add this test to avoid malformatted url
+        if (! preg_match("`".$this->subDomainsMask.$this->domainWildCard."/`", $url)) {
+            return false;
+        }
 
         return true;
     }
