@@ -15,15 +15,12 @@ $walker = new \Walker\Walker("http://www.somewebsite.fr", ".*");
 ```
 
 ## Usage :
-In your composer.json, add Walker repository and its call into "require" block :
+In your composer.json add Walker into "require" block :
 
 ```
 {
-    "repositories": [
-        {"type":"vcs", "url":"git@github.com:c2is/Walker.git"}
-    ],
     "require": {
-        "c2is/Walker" : "dev-master"
+        "c2is/walker" : "dev-master"
     },
     "minimum-stability": "dev",
     "autoload": {
