@@ -57,6 +57,7 @@ echo "<pre>URL | STATUS | CALLED IN | LAST MODIF";
 
 $walker -> run(function ($client, $stats) {
     $lastMod = $client->getResponse()->getHeader("last-modified");
+    $stats = $client->getStats();
     printf("\n%s | %s | %s| %s",$stats[0], $stats[1], $stats[2], $lastMod);
     flush();
 });
