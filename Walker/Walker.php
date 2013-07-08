@@ -32,6 +32,7 @@ class Walker
     {
         $this->links  = array();
         $this->urlsVisited  = array();
+        $this->invalidUrlsFound = array();
         $this->baseUrl = $baseUrl;
         if (strrpos($this->baseUrl, "/") == strlen($this->baseUrl)-1) {
             $this->baseUrl = substr($this->baseUrl, 0, strlen($this->baseUrl)-1);
@@ -152,23 +153,26 @@ class Walker
                 break;
             }
         }
-        // todo : stock invalid url and its referrers
         if (! filter_var($url, FILTER_VALIDATE_URL)) {
-            $this -> invalidUrlsFound[] = array($url, $referrer);
+            if ($this->subArraySearch($this -> invalidUrlsFound,0,$url) !== false) {
+                $this -> updateSubArray($this -> invalidUrlsFound, 0, $url, 1, $referrer);
+            } else {
+
+                $this -> invalidUrlsFound[] = array($url, $referrer);
+
+            }
 
             return false;
         }
         // filter_var considers http://www.portesdusoleil.commultipass-journee-hebergeur-adherent.html as an url
         // so we add this test to avoid malformatted url
-        // todo : stock invalid url and its referrers
         if ($url != $this->baseUrl) {
             if (preg_match("`".$this->subDomainsMask.$this->domainWildCard."`", $url)
                 && ! preg_match("`".$this->subDomainsMask.$this->domainWildCard."/`", $url)) {
 
                     if (in_array($url, $this->urlsVisited)) {
-                        $this -> invalidUrlsFound[] = array($url, "`".$this->subDomainsMask.$this->domainWildCard."/`");
+                            $this -> updateSubArray($this -> invalidUrlsFound, 0, $url, 1, $referrer);
                     }
-
 
             return false;
             }
@@ -196,7 +200,7 @@ class Walker
         );
         list($key, $val) = each($arrayField);
 
-        if (strpos($array[$key][$indexUpdated], $valueUpdated) === false && $valueUpdated !="") {
+        if (strpos($array[$key][$indexUpdated], $valueUpdated) === false && $valueUpdated !="" && $key) {
             $tmpContent = ($array[$key][$indexUpdated] != "")?  explode(",", $array[$key][$indexUpdated]):array();
             $tmpContent[] = $valueUpdated;
             $array[$key][$indexUpdated] = implode(",", $tmpContent);
@@ -209,6 +213,16 @@ class Walker
                 return $line;
             }
         }
+    }
+    public function subArraySearch($array,$indexSearched, $valueSearched)
+    {
+        foreach ($array as $index => $line) {
+            if ($line[$indexSearched] == $valueSearched) {
+                return $index;
+            }
+        }
+
+        return false;
     }
     public function getStats()
     {
