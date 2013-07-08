@@ -26,7 +26,7 @@ class Client extends BaseClient
 
             $this->lastUri = $uri;
             $this->lastStatus = $statusCode;
-            $this->walker->stats[] = array($uri,$statusCode,$this->lastReferer);
+            $this->walker->addStat(array($uri,$statusCode,$this->lastReferer));
         } else {
             $headers[] = "";
             $statusCode = $this->walker->findStat($uri)[1];

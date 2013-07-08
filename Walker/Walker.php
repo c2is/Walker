@@ -23,9 +23,9 @@ class Walker
     private $walkerClient;
     private $domainWildCard;
     private $subDomainsMask;
+    private $invalidUrlsFound;
+    private $stats;
 
-    public $stats;
-    public $invalidUrlsFound;
     public $configurations;
 
     public function __construct($baseUrl, $subDomainsMask = null)
@@ -224,9 +224,17 @@ class Walker
 
         return false;
     }
+    public function addStat($array)
+    {
+        return $this->stats[] = $array;
+    }
     public function getStats()
     {
         return $this->stats;
+    }
+    public function getInvalidUrlsFound()
+    {
+        return $this->invalidUrlsFound;
     }
     public function getLinks()
     {
