@@ -25,6 +25,7 @@ class Walker
     private $subDomainsMask;
 
     public $stats;
+    public $invalidUrlsFound;
     public $configurations;
 
     public function __construct($baseUrl, $subDomainsMask = null)
@@ -37,9 +38,9 @@ class Walker
         }
         $this->configurations = array();
 
-        $this->setConfiguration("excludedFileExt","`\.(jpg|jpeg|gif|png)$`i");
-        $this->setConfiguration("forbiddenPattern",array("mailto", "#", "javascript"));
-        $this->setConfiguration("httpClientOptions",['curl.options' => array(
+        $this->setConfiguration("excludedFileExt", "`\.(jpg|jpeg|gif|png)$`i");
+        $this->setConfiguration("forbiddenPattern", array("mailto", "#", "javascript"));
+        $this->setConfiguration("httpClientOptions", ['curl.options' => array(
         CURLOPT_CONNECTTIMEOUT      => 150,
         CURLOPT_TIMEOUT      => 300,
         CURLOPT_CONNECTTIMEOUT_MS      => 150000,
@@ -77,22 +78,22 @@ class Walker
         $this->initClient();
         $this->checkLinks($this->baseUrl, null, $callback);
     }
-    public function checkLinks($url, $referer = "", $callback = null)
+    public function checkLinks($url, $referrer = "", $callback = null)
     {
 
-        if (! $this->isUrlToCheck($url, $referer)) {
+        if (! $this->isUrlToCheck($url, $referrer)) {
             return true;
         }
-        if ( ! $this->isValidUrl($url)) {
+        if ( ! $this->isValidUrl($url, $referrer)) {
             return true;
         }
 
-        $this->walkerClient -> lastReferer = $referer;
+        $this->walkerClient -> lastreferrer = $referrer;
         $crawler = $this->walkerClient->request('GET', $url);
 
 
         if (null !== $callback) {
-            call_user_func($callback, $this->walkerClient, $this->walkerClient->getStats());
+            call_user_func($callback, $this->walkerClient);
         }
 
         // getting  href attributes belonging to nodes of type "a"
@@ -114,24 +115,24 @@ class Walker
                 $this->links[] = $linkUri;
             }
 
-            if ($this->isValidUrl($linkUri)) {
+            if ($this->isValidUrl($linkUri, $referrer)) {
                 $this->checkLinks($linkUri, $url, $callback);
             }
 
         }
     }
-    public function isUrlToCheck($url, $referer)
+    public function isUrlToCheck($url, $referrer)
     {
         $urlDomain = parse_url($url, PHP_URL_HOST);
 
         if (in_array($url, $this->urlsVisited)) {
-            if ($referer != "") {
-                $this->updateStat($url, $referer);
+            if ($referrer != "") {
+                $this->updateStat($url, $referrer);
             }
 
             return false;
         }
-        if (! $this->isValidUrl($url)) {
+        if (! $this->isValidUrl($url, $referrer)) {
             return false;
         }
         if ( ! preg_match("`".$this->subDomainsMask.$this->domainWildCard."`", $urlDomain) || preg_match($this->getConfiguration("excludedFileExt"), $url)) {
@@ -140,7 +141,7 @@ class Walker
 
         return true;
     }
-    public function isValidUrl($url)
+    public function isValidUrl($url, $referrer)
     {
         if (! is_string($url)) {
             return false;
@@ -151,31 +152,54 @@ class Walker
                 break;
             }
         }
+        // todo : stock invalid url and its referrers
         if (! filter_var($url, FILTER_VALIDATE_URL)) {
+            $this -> invalidUrlsFound[] = array($url, $referrer);
+
             return false;
         }
         // filter_var considers http://www.portesdusoleil.commultipass-journee-hebergeur-adherent.html as an url
         // so we add this test to avoid malformatted url
-        if ($url != $this->baseUrl && ! preg_match("`".$this->subDomainsMask.$this->domainWildCard."/`", $url)) {
-           
+        // todo : stock invalid url and its referrers
+        if ($url != $this->baseUrl) {
+            if (preg_match("`".$this->subDomainsMask.$this->domainWildCard."`", $url)
+                && ! preg_match("`".$this->subDomainsMask.$this->domainWildCard."/`", $url)) {
+
+                    if (in_array($url, $this->urlsVisited)) {
+                        $this -> invalidUrlsFound[] = array($url, "`".$this->subDomainsMask.$this->domainWildCard."/`");
+                    }
+
+
             return false;
+            }
         }
 
         return true;
     }
-    public function updateStat($url, $referer="")
+    public function updateStat($url, $referrer="")
     {
-        foreach ($this->stats as $index => $line) {
-            if ($line[0] == $url) {
-                $key = $index;
+        $this->updateSubArray($this->stats, 0, $url, 2, $referrer);
+
+    }
+    public function updateSubArray(&$array, $indexSearched, $valueSearched, $indexUpdated, $valueUpdated)
+    {
+        $this->valueSearched = $valueSearched;
+        $this->indexSearched = $indexSearched;
+
+        $arrayField = array_filter($array, function($value) {
+            if ($value[$this->indexSearched] == $this->valueSearched) {
+                return true;
+            } else {
+                return false;
             }
         }
-        if (strpos($this->stats[$key][2], $referer) === false && $referer !="") {
-            $tmpContent = ($this->stats[$key][2] != "")?  explode(",", $this->stats[$key][2]):array();
-            $tmpContent[] = $referer;
+        );
+        list($key, $val) = each($arrayField);
 
-            $this->stats[$key][2] = implode(",", $tmpContent);
-
+        if (strpos($array[$key][$indexUpdated], $valueUpdated) === false && $valueUpdated !="") {
+            $tmpContent = ($array[$key][$indexUpdated] != "")?  explode(",", $array[$key][$indexUpdated]):array();
+            $tmpContent[] = $valueUpdated;
+            $array[$key][$indexUpdated] = implode(",", $tmpContent);
         }
     }
     public function findStat($url)
