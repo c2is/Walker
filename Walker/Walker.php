@@ -94,7 +94,7 @@ class Walker
 
 
         if (null !== $callback) {
-            call_user_func($callback, $this->walkerClient);
+            call_user_func($callback, $crawler, $this->walkerClient);
         }
 
         // getting  href attributes belonging to nodes of type "a"
