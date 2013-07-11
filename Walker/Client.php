@@ -34,6 +34,7 @@ class Client extends BaseClient
         }
 
         $this->walker->urlsVisited[] = $uri;
+
         return $response;
 
     }

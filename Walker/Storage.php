@@ -55,12 +55,12 @@ class Storage extends Walker
     }
     public function add($varName, $array)
     {
-        foreach ($array as $k=>$val) {
+        foreach ($array as $k => $val) {
             $indexed[array_search($k, $this->varStored[$varName."Desc"])] = $val;
         }
         if (count($array) < count($this->varStored[$varName."Desc"])) {
-            foreach ($this->varStored[$varName."Desc"] as $index=>$value) {
-                if(! array_key_exists($index, $indexed)) {
+            foreach ($this->varStored[$varName."Desc"] as $index => $value) {
+                if (! array_key_exists($index, $indexed)) {
                     $indexed[$index] = "";
                 }
             }
@@ -73,11 +73,12 @@ class Storage extends Walker
         $colsNames = $this -> getColumns($varName);
         foreach ($this->varStored[$varName] as $infos) {
             $tmp = "";
-            foreach ($infos as $k=>$val){
+            foreach ($infos as $k => $val) {
                 $tmp[$colsNames[$k]] = $val;
             }
             $assoc[] = $tmp;
         }
+
         return $assoc;
     }
     public function updateSubArray(&$array, $indexSearched, $valueSearched, $indexUpdated, $valueUpdated)
@@ -91,7 +92,7 @@ class Storage extends Walker
                 } else {
                     return false;
                 }
-            }
+        }
         );
         list($key, $val) = each($arrayField);
 

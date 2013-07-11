@@ -32,9 +32,9 @@ class Walker
     {
         $this->storage = new Storage();
         $this->storage->addVarToStore("stats");
-        $this->storage->addColumn("stats","URL");
-        $this->storage->addColumn("stats","STATUS");
-        $this->storage->addColumn("stats","CALLED IN");
+        $this->storage->addColumn("stats", "URL");
+        $this->storage->addColumn("stats", "STATUS");
+        $this->storage->addColumn("stats", "CALLED IN");
 
         $this->links  = array();
         $this->urlsVisited  = array();
@@ -160,7 +160,7 @@ class Walker
             }
         }
         if (! filter_var($url, FILTER_VALIDATE_URL)) {
-            if ($this->storage->subArraySearch($this -> invalidUrlsFound,0,$url) !== false) {
+            if ($this->storage->subArraySearch($this -> invalidUrlsFound, 0, $url) !== false) {
                 $this->storage->updateSubArray($this -> invalidUrlsFound, 0, $url, 1, $referrer);
             } else {
 
