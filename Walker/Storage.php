@@ -58,6 +58,15 @@ class Storage extends Walker
         foreach ($array as $k=>$val) {
             $indexed[array_search($k, $this->varStored[$varName."Desc"])] = $val;
         }
+        if (count($array) < count($this->varStored[$varName."Desc"])) {
+            $exclude = array_flip($indexed);
+            foreach ($this->varStored[$varName."Desc"] as $index=>$value) {
+                if(! in_array($index,$exclude)) {
+                    $indexed[$index] = "";
+                }
+            }
+
+        }
         return $this->varStored[$varName][] = $indexed;
     }
     public function get($varName)
