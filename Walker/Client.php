@@ -26,10 +26,10 @@ class Client extends BaseClient
 
             $this->lastUri = $uri;
             $this->lastStatus = $statusCode;
-            $this->walker->addStat(array($uri,$statusCode,$this->lastReferer));
+            $this->walker->storage->add("stats", array("URL"=>$uri,"STATUS"=>$statusCode,"CALLED IN"=>$this->lastReferer));
         } else {
             $headers[] = "";
-            $statusCode = $this->walker->findStat($uri)[1];
+            $statusCode = $this->walker->storage->find("stats", $uri)[1];
             $response = new Response("", $statusCode, $headers);
         }
 
@@ -43,7 +43,7 @@ class Client extends BaseClient
     }
     public function getStats()
     {
-        return array($this->lastUri, $this->lastStatus, $this->lastReferer);
+        return array("URL"=>$this->lastUri, "STATUS"=>$this->lastStatus, "CALLED IN"=>$this->lastReferer);
     }
 
 }

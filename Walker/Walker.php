@@ -24,12 +24,18 @@ class Walker
     private $domainWildCard;
     private $subDomainsMask;
     private $invalidUrlsFound;
-    private $stats;
 
     public $configurations;
+    public $storage;
 
     public function __construct($baseUrl, $subDomainsMask = null)
     {
+        $this->storage = new Storage();
+        $this->storage->addVarToStore("stats");
+        $this->storage->addColumn("stats","URL");
+        $this->storage->addColumn("stats","STATUS");
+        $this->storage->addColumn("stats","CALLED IN");
+
         $this->links  = array();
         $this->urlsVisited  = array();
         $this->invalidUrlsFound = array();
@@ -128,7 +134,7 @@ class Walker
 
         if (in_array($url, $this->urlsVisited)) {
             if ($referrer != "") {
-                $this->updateStat($url, $referrer);
+                $this->storage->update("stats", "URL", $url, "CALLED IN", $referrer);
             }
 
             return false;
@@ -154,8 +160,8 @@ class Walker
             }
         }
         if (! filter_var($url, FILTER_VALIDATE_URL)) {
-            if ($this->subArraySearch($this -> invalidUrlsFound,0,$url) !== false) {
-                $this -> updateSubArray($this -> invalidUrlsFound, 0, $url, 1, $referrer);
+            if ($this->storage->subArraySearch($this -> invalidUrlsFound,0,$url) !== false) {
+                $this->storage->updateSubArray($this -> invalidUrlsFound, 0, $url, 1, $referrer);
             } else {
 
                 $this -> invalidUrlsFound[] = array($url, $referrer);
@@ -171,7 +177,7 @@ class Walker
                 && ! preg_match("`".$this->subDomainsMask.$this->domainWildCard."/`", $url)) {
 
                     if (in_array($url, $this->urlsVisited)) {
-                            $this -> updateSubArray($this -> invalidUrlsFound, 0, $url, 1, $referrer);
+                            $this->storage->updateSubArray($this -> invalidUrlsFound, 0, $url, 1, $referrer);
                     }
 
             return false;
@@ -179,58 +185,6 @@ class Walker
         }
 
         return true;
-    }
-    public function updateStat($url, $referrer="")
-    {
-        $this->updateSubArray($this->stats, 0, $url, 2, $referrer);
-
-    }
-    public function updateSubArray(&$array, $indexSearched, $valueSearched, $indexUpdated, $valueUpdated)
-    {
-        $this->valueSearched = $valueSearched;
-        $this->indexSearched = $indexSearched;
-
-        $arrayField = array_filter($array, function($value) {
-            if ($value[$this->indexSearched] == $this->valueSearched) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        );
-        list($key, $val) = each($arrayField);
-
-        if (strpos($array[$key][$indexUpdated], $valueUpdated) === false && $valueUpdated !="" && $key) {
-            $tmpContent = ($array[$key][$indexUpdated] != "")?  explode(",", $array[$key][$indexUpdated]):array();
-            $tmpContent[] = $valueUpdated;
-            $array[$key][$indexUpdated] = implode(",", $tmpContent);
-        }
-    }
-    public function findStat($url)
-    {
-        foreach ($this->stats as $index => $line) {
-            if ($line[0] == $url) {
-                return $line;
-            }
-        }
-    }
-    public function subArraySearch($array,$indexSearched, $valueSearched)
-    {
-        foreach ($array as $index => $line) {
-            if ($line[$indexSearched] == $valueSearched) {
-                return $index;
-            }
-        }
-
-        return false;
-    }
-    public function addStat($array)
-    {
-        return $this->stats[] = $array;
-    }
-    public function getStats()
-    {
-        return $this->stats;
     }
     public function getInvalidUrlsFound()
     {
