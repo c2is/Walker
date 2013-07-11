@@ -59,14 +59,13 @@ class Storage extends Walker
             $indexed[array_search($k, $this->varStored[$varName."Desc"])] = $val;
         }
         if (count($array) < count($this->varStored[$varName."Desc"])) {
-            $exclude = array_flip($indexed);
             foreach ($this->varStored[$varName."Desc"] as $index=>$value) {
-                if(! in_array($index,$exclude)) {
+                if(! array_key_exists($index, $indexed)) {
                     $indexed[$index] = "";
                 }
             }
-
         }
+
         return $this->varStored[$varName][] = $indexed;
     }
     public function get($varName)
@@ -96,7 +95,7 @@ class Storage extends Walker
         );
         list($key, $val) = each($arrayField);
 
-        if (strpos($array[$key][$indexUpdated], $valueUpdated) === false && $valueUpdated !="" && $key) {
+        if (strpos($array[$key][$indexUpdated], $valueUpdated) === false && $valueUpdated !="" && $key !== false) {
             $tmpContent = ($array[$key][$indexUpdated] != "")?  explode(",", $array[$key][$indexUpdated]):array();
             $tmpContent[] = $valueUpdated;
             $array[$key][$indexUpdated] = implode(",", $tmpContent);
