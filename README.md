@@ -55,7 +55,7 @@ If you want more informations or operations to be performed real-time during cra
 ```
 echo "<pre>URL | STATUS | CALLED IN | LAST MODIF";
 
-$walker -> run(function ($client, $stats) {
+$walker -> run(function ($crawler, $client) {
     $lastMod = $client->getResponse()->getHeader("last-modified");
     $stats = $client->getStats();
     printf("\n%s | %s | %s| %s",$stats[0], $stats[1], $stats[2], $lastMod);
