@@ -42,10 +42,9 @@ Instanciate the crawler, start the crawl and output stats after the process :
 ```
 $walker = new \Walker\Walker("http://www.somewebsite.fr");
 $walker -> start();
-
-echo "<pre>URL | STATUS | CALLED IN";
-foreach($walker->getStats() as $stats){
-    printf("\n%s | %s | %s",$stats[0], $stats[1], $stats[2]);
+echo "<pre>".implode(" | ", $walker->storage->getColumns("stats"));
+foreach($walker->storage->get("stats") as $stats){
+    printf("\n%s | %s | %s",$stats["URL"], $stats["STATUS"], $stats["CALLED IN"]);
 }
 echo "</pre>";
 ```
@@ -53,12 +52,11 @@ echo "</pre>";
 If you want more informations or operations to be performed real-time during crawling you can pass an anonymous function to the run() method :
 
 ```
-echo "<pre>URL | STATUS | CALLED IN | LAST MODIF";
-
+echo "<pre>".implode(" | ", $walker->storage->getColumns("stats"))." | LAST MODIF";
 $walker -> run(function ($crawler, $client) {
     $lastMod = $client->getResponse()->getHeader("last-modified");
     $stats = $client->getStats();
-    printf("\n%s | %s | %s| %s",$stats[0], $stats[1], $stats[2], $lastMod);
+    printf("\n%s | %s | %s| %s",$stats["URL"], $stats["STATUS"], $stats["CALLED IN"], $lastMod);
     flush();
 });
 echo "</pre>";
