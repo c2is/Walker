@@ -1,10 +1,7 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: andre
- * Date: 27/06/13
- * Time: 15:00
- * To change this template use File | Settings | File Templates.
+ * This file is part of a C2iS <http://wwww.c2is.fr/> project.
+ * André Cianfarani <a.cianfarani@c2is.fr>
  */
 namespace Walker;
 
