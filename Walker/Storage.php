@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of a C2iS <http://wwww.c2is.fr/> project.
+ * This file is part of the C2iS <http://wwww.c2is.fr/> Walker project.
  * André Cianfarani <a.cianfarani@c2is.fr>
  */
 namespace Walker;
