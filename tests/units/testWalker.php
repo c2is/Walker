@@ -9,7 +9,7 @@ namespace tests\units;
 
 require_once 'vendor/bin/atoum';
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use \mageekguy\atoum;
 use \Walker;
