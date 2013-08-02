@@ -16,8 +16,9 @@ use \Walker;
 
 class Client extends atoum\test
 {
-    public function test__construct()
+    public function testgetStats()
     {
-        $this->string("Hello Wod!")->isEqualTo('Hello World!');
+        $client = new \Walker\Client();
+        $this->array($client->getStats())->hasKey("URL");
     }
 }
