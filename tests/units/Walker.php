@@ -9,12 +9,12 @@ namespace tests\units;
 
 require_once 'vendor/bin/atoum';
 
-include realpath(__DIR__) . '/../../Walker/Walker.php';
+include realpath(__DIR__) . '/../../Walker/CLient.php';
 
 use \mageekguy\atoum;
 use \Walker;
 
-class Walker extends atoum\test
+class Client extends atoum\test
 {
     public function test__construct()
     {
