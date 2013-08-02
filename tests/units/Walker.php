@@ -9,7 +9,7 @@ namespace tests\units;
 
 require_once 'vendor/bin/atoum';
 
-include realpath(__DIR__) . '/../../Walker/CLient.php';
+include realpath(__DIR__) . '/../../Walker/Client.php';
 
 use \mageekguy\atoum;
 use \Walker;
