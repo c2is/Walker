@@ -5,7 +5,7 @@
  */
 
 
-namespace tests\units;
+namespace Walker\tests\units;
 
 require_once 'vendor/bin/atoum';
 
