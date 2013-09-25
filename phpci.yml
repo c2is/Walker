@@ -4,3 +4,9 @@ setup:
 test:
     atoum:
         directory: "tests/units"
+success:
+    shell:
+        command: "cp /var/www/PHPCI/public/assets/img/build-ok.png /var/www/PHPCI/public/assets/img/walker.png"
+failure:
+    shell:
+        command: "cp /var/www/PHPCI/public/assets/img/build-failed.png /var/www/PHPCI/public/assets/img/walker.png"
